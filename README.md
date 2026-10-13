@@ -35,3 +35,13 @@ to manage instruction dependencies and improve execution efficiency.
 
 ![Five-Stage Pipeline Architecture](docs/Processor%20Architecture.png)
 
+#### Stage 1 - Instruction Fetch (IF)
+The Program Counter (PC) identifies the next instruction. The processor fetches that instruction from instruction memory, with the cache subsystem helping supply instructions. The PC normally increments by 4 bytes.
+#### Stage 2 — Instruction Decode (ID)
+The control unit interprets the instruction, reads source operands from the register file, and generates immediate values and control signals.
+#### Stage 3 — Execute (EX)
+The Arithmetic Logic Unit (ALU) performs operations such as addition, subtraction, and comparisons. Branch calculations and operand forwarding also occur around this stage.
+#### Stage 4 — Memory Access (MEM)
+Load instructions read data from memory, and store instructions write data. Arithmetic instructions can pass their results through this stage.
+#### Stage 5 — Write Back (WB)
+The final result is written to its destination register when the instruction requires a register update.
