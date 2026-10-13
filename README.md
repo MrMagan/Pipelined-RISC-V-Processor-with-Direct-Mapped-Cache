@@ -24,5 +24,5 @@ The project was developed using Xilinx Vivado for RTL design, simulation, and sy
 
 - Simulation and Verification: Includes SystemVerilog testbenches for testing processor and memory functionality.
 
-## Verilog File Structure
+
 
