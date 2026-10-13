@@ -24,5 +24,14 @@ The project was developed using Xilinx Vivado for RTL design, simulation, and sy
 
 - Simulation and Verification: Includes SystemVerilog testbenches for testing processor and memory functionality.
 
+## Five-Stage Pipeline Architecture
 
+The processor implements a five-stage RISC-V pipeline consisting
+of Instruction Fetch (IF), Instruction Decode (ID), Execute (EX),
+Memory Access (MEM), and Write Back (WB).
+
+The architecture incorporates hazard detection and data forwarding
+to manage instruction dependencies and improve execution efficiency.
+
+![Five-Stage Pipeline Architecture](docs/Processor%20Architecture.png)
 
