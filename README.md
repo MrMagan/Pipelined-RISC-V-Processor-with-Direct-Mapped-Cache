@@ -51,5 +51,5 @@ The final result is written to its destination register when the instruction req
 The following schematics were generated using Xilinx Vivado and illustrate the synthesized RTL architecture of the processor.
 
 - [Top-Level Processor Schematic](docs/Schematic.svg)
-- [CPU Datapath Schematic](docs/CPU_Datapath.svg)
+- [CPU Datapath Schematic](https://raw.githubusercontent.com/MrMagan/Pipelined-RISC-V-Processor-with-Direct-Mapped-Cache/main/docs/CPU_Datapath.svg)
 - [Cache Controller Schematic](docs/Cache_Datapath.svg)
