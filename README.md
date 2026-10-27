@@ -45,3 +45,11 @@ The Arithmetic Logic Unit (ALU) performs operations such as addition, subtractio
 Load instructions read data from memory, and store instructions write data. Arithmetic instructions can pass their results through this stage.
 #### Stage 5 — Write Back (WB)
 The final result is written to its destination register when the instruction requires a register update.
+
+## RTL Schematics
+
+The following schematics were generated using Xilinx Vivado and illustrate the synthesized RTL architecture of the processor.
+
+- [Top-Level Processor Schematic](docs/Schematic.svg)
+- [CPU Datapath Schematic](docs/schematics/CPU_Datapath.svg)
+- [Cache Controller Schematic](docs/schematics/Cache_Datapath.svg)
