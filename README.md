@@ -80,6 +80,76 @@ The cache controller uses a Finite State Machine (FSM) with two primary states:
 - **ST_READ_MEM:** Handles cache misses by stalling instruction fetching and initiating a cache update.
 
 This architecture is intended to reduce unnecessary memory accesses and improve processor throughput by supplying cached instructions to the instruction-fetch stage.
+## Hazard Detection and Data Forwarding
+
+The processor implements a **Hazard Detection Unit** and **Data Forwarding Logic** to manage data dependencies between instructions executing in different pipeline stages. These mechanisms help maintain correct instruction execution while minimizing unnecessary pipeline stalls.
+
+### Hazard Detection
+
+Data hazards occur when an instruction requires a register value that a previous instruction has not yet written back to the register file.
+
+The `HazardUnit.sv` module monitors source and destination registers across pipeline stages to identify potential dependencies.
+
+- **Register Dependency Detection:** Compares source registers (`rs1`, `rs2`) against destination registers (`rd`) of preceding instructions.
+- **Load-Use Hazard Detection:** Identifies when an instruction immediately following a load depends on the loaded data.
+- **Pipeline Stalling:** Generates a `STALL` signal when a load-use dependency cannot be resolved through forwarding alone.
+- **Flush Handling:** Uses the `FLUSH_COMPLETE` signal to suppress hazard-control actions during the designated flush condition.
+
+### Data Forwarding
+
+Data forwarding, also known as *bypassing*, allows instructions to use results from previous instructions before those results are written back to the register file.
+
+Rather than waiting for the write-back stage, the processor forwards available data directly from later pipeline stages to the execution stage.
+
+The forwarding system supports:
+
+- **MEM-to-EX Forwarding:** Forwards an ALU result from the Memory stage to a dependent instruction in the Execute stage.
+- **WB-to-EX Forwarding:** Forwards a result from the Write-Back stage to the Execute stage.
+- **Store Data Forwarding:** Provides updated register values to store instructions when the data being stored depends on a preceding instruction.
+- **Forwarding Priority:** Prioritizes the Memory-stage result over the Write-Back-stage result when both match the same source register.
+
+### Forwarding Control Signals
+
+The Hazard Detection Unit generates forwarding selection signals (`FWD_A_SEL`, `FWD_B_SEL`) to control the multiplexers supplying operands to the ALU.
+
+| Signal Value | Forwarding Source |
+|---|---|
+| `00` | Normal ALU operand |
+| `01` | Memory (MEM) stage |
+| `10` | Write-Back (WB) stage |
+
+The processor also uses `SW_FWD_SEL` to select forwarded data for store instructions.
+
+### Load-Use Hazard Example
+
+Consider the following RISC-V instructions:
+
+```asm
+lw  x5, 0(x10)      # Load data into x5
+add x6, x5, x7     # Use the loaded value
+```
+
+The `add` instruction depends on the result of the preceding `lw` instruction. Because the loaded value is not immediately available, the Hazard Detection Unit asserts `STALL` to delay execution until the dependency can be resolved.
+
+### Data Forwarding Example
+
+```asm
+add x5, x6, x7     # x5 = x6 + x7
+sub x8, x5, x9     # x8 = x5 - x9
+```
+
+The `sub` instruction requires the result of the preceding `add` instruction. Instead of waiting for `x5` to be written back to the register file, the forwarding logic supplies the ALU result directly to the dependent instruction.
+
+This reduces pipeline stalls and improves overall instruction throughput.
+
+### Implementation Files
+
+- `HazardUnit.sv` — Detects register dependencies and generates stall and forwarding control signals.
+- `Fwd_Mux_A.sv` — Selects the appropriate forwarded data for ALU operand A.
+- `Fwd_Mux_B.sv` — Selects the appropriate forwarded data for ALU operand B.
+- `Sw_Fwd_Mux.sv` — Selects forwarded data for store instructions.
+
+Together, these components improve pipeline efficiency by resolving common data dependencies without requiring every instruction to complete the write-back stage before dependent instructions can execute.
 
 ## RTL Schematics
 
